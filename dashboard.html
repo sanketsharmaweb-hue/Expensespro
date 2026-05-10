@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpensePro | Cloud v3.0</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        :root { --bg: #000; --surface: #121212; --primary: #6366f1; --income: #22c55e; --expense: #ef4444; --text-main: #fff; --text-dim: #94a3b8; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg); color: var(--text-main); padding-bottom: 110px; }
+        
+        /* Page Logic */
+        .page { display: none; padding: 40px 24px; animation: fadeIn 0.4s ease; max-width: 600px; margin: 0 auto; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* UI Components */
+        .header { margin-bottom: 25px; }
+        .header h1 { font-size: 28px; font-weight: 800; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .balance-card { background: linear-gradient(135deg, #1e1e1e, #111); padding: 30px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); text-align: center; margin-bottom: 30px; }
+        .t-item { background: var(--surface); padding: 16px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); }
+        .t-icon { width: 48px; height: 48px; background: rgba(255,255,255,0.05); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .card-opt { background: var(--surface); padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); }
+
+        /* Modal & Tabs */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: flex-end; z-index: 1000; }
+        .modal-content { background: var(--surface); width: 100%; max-width: 500px; padding: 30px; border-radius: 40px 40px 0 0; border: 1px solid rgba(255,255,255,0.1); transform: translateY(100%); transition: 0.3s ease; }
+        .modal-overlay.open { display: flex; }
+        .modal-overlay.open .modal-content { transform: translateY(0); }
+        
+        .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 20px 0; }
+        .cat-btn { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 15px; color: var(--text-dim); cursor: pointer; text-align: center; border: 1.5px solid transparent; }
+        .cat-btn.selected { background: rgba(99, 102, 241, 0.15); border-color: var(--primary); color: #fff; }
+
+        .type-toggle { display: flex; gap: 10px; margin-bottom: 20px; background: rgba(255,255,255,0.05); padding: 6px; border-radius: 15px; }
+        .type-btn { flex: 1; padding: 10px; border: none; border-radius: 10px; cursor: pointer; color: var(--text-dim); font-weight: 700; background: transparent; }
+        .type-btn.active-ex { background: var(--expense); color: #fff; }
+        .type-btn.active-in { background: var(--income); color: #fff; }
+
+        /* Nav */
+        .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 420px; background: rgba(18,18,18,0.95); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 12px; border-radius: 35px; border: 1px solid rgba(255,255,255,0.1); z-index: 500; }
+        .nav-item { color: var(--text-dim); border: none; background: none; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav-item.active { color: var(--primary); }
+        .add-btn { width: 60px; height: 60px; background: var(--primary); border-radius: 50%; color: #fff; font-size: 32px; border: none; transform: translateY(-22px); box-shadow: 0 10px 25px rgba(99,102,241,0.5); }
+    </style>
+</head>
+<body>
+
+    <div id="home" class="page active">
+        <header class="header"><p id="greet">Hello,</p><h1>Aditya!</h1></header>
+        <div class="balance-card"><span id="currLbl">Current Balance (₹)</span><h2 id="mainBal">₹0</h2></div>
+        <h3>Live Activity</h3>
+        <div id="transList" style="margin-top: 15px;"></div>
+    </div>
+
+    <div id="reports" class="page">
+        <header class="header"><h1>Report</h1></header>
+        <div class="balance-card" style="padding: 20px;"><canvas id="reportChart"></canvas></div>
+        <div class="card-opt"><span>Financial Health</span><h4 style="color:var(--income)">Active</h4></div>
+    </div>
+
+    <div id="settings" class="page">
+        <header class="header"><h1>Settings</h1></header>
+        <div class="card-opt"><span>Currency</span>
+            <select id="currSel" onchange="updateCurrency()"><option value="₹">INR (₹)</option><option value="$">USD ($)</option></select>
+        </div>
+        <button onclick="wipe()" style="width:100%; padding:15px; border-radius:15px; border:none; background:rgba(239, 68, 68, 0.1); color:#ef4444; font-weight:700; margin-top:20px;">Wipe Cloud Data</button>
+    </div>
+
+    <div id="profile" class="page">
+        <header class="header"><h1>Profile</h1></header>
+        <div style="text-align: center; margin-bottom: 30px;">
+            <div style="width: 80px; height: 80px; background: var(--primary); border-radius: 50%; margin: 0 auto; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800;">A</div>
+            <h2 style="margin-top:10px;">Aditya Kumar</h2>
+            <p id="rankLabel" style="color: var(--primary); font-weight: 700; margin-top: 5px;">BRONZE RANK</p>
+        </div>
+        <div class="card-opt"><span>Total Transactions</span><h4 id="statCount">0</h4></div>
+        <div class="card-opt"><span>Account Type</span><h4 style="color:var(--income)">Verified</h4></div>
+    </div>
+
+    <div id="addModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="type-toggle"><button id="exBtn" class="type-btn active-ex" onclick="setType('expense')">Expense</button><button id="inBtn" class="type-btn" onclick="setType('income')">Income</button></div>
+            <input type="number" id="amtInp" style="width:100%; background:transparent; border:none; border-bottom:2px solid var(--primary); color:#fff; font-size:40px; text-align:center; outline:none;" placeholder="0">
+            <div class="cat-grid" id="catGrid">
+                <div class="cat-btn selected" onclick="selCat(this, '🍕', 'Food')"><div>🍕</div><small>Food</small></div>
+                <div class="cat-btn" onclick="selCat(this, '🚗', 'Travel')"><div>🚗</div><small>Travel</small></div>
+                <div class="cat-btn" onclick="selCat(this, '🛍️', 'Shop')"><div>🛍️</div><small>Shop</small></div>
+                <div class="cat-btn" onclick="selCat(this, '💡', 'Bills')"><div>💡</div><small>Bills</small></div>
+                <div class="cat-btn" onclick="selCat(this, '🎬', 'Fun')"><div>🎬</div><small>Fun</small></div>
+                <div class="cat-btn" onclick="selCat(this, '💊', 'Health')"><div>💊</div><small>Health</small></div>
+            </div>
+            <button onclick="save()" style="width:100%; padding:18px; background:var(--primary); border:none; border-radius:18px; color:#fff; font-weight:800; font-size:16px;">Save to Firebase</button>
+            <button onclick="closeModal()" style="width:100%; background:none; border:none; color:var(--text-dim); margin-top:12px;">Cancel</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="showPage('home', this)"><span>🏠</span><small>Home</small></button>
+        <button class="nav-item" onclick="showPage('reports', this)"><span>📈</span><small>Report</small></button>
+        <button class="add-btn" onclick="openModal()">+</button>
+        <button class="nav-item" onclick="showPage('settings', this)"><span>⚙️</span><small>Setting</small></button>
+        <button class="nav-item" onclick="showPage('profile', this)"><span>👤</span><small>Profile</small></button>
+    </nav>
+
+    <script>
+        // --- Firebase Config Applied ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAuAk4SC_u75__SMqKu50r5bVdga8xcSZY",
+            authDomain: "expensespro.firebaseapp.com",
+            projectId: "expensespro",
+            storageBucket: "expensespro.firebasestorage.app",
+            messagingSenderId: "117225436411",
+            appId: "1:117225436411:web:db2359d4c642ceec46ac5e"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let balance = 0, type = 'expense', icon = '🍕', catName = 'Food', count = 0, chart = null;
+
+        // Fetch Data from Cloud
+        function initApp() {
+            db.ref('aditya_data').on('value', (snap) => {
+                const data = snap.val();
+                if(data) {
+                    balance = data.balance || 0;
+                    count = data.count || 0;
+                    document.getElementById('currSel').value = data.currency || '₹';
+                    renderHistory(data.history);
+                    updateStats();
+                }
+            });
+        }
+
+        function updateStats() {
+            const cur = document.getElementById('currSel').value;
+            document.getElementById('mainBal').innerText = cur + balance.toLocaleString();
+            document.getElementById('statCount').innerText = count;
+            document.getElementById('currLbl').innerText = `Current Balance (${cur})`;
+            
+            let rank = "BRONZE RANK";
+            if(count > 10) rank = "SILVER RANK";
+            if(count > 25) rank = "GOLD RANK";
+            document.getElementById('rankLabel').innerText = rank;
+        }
+
+        function renderHistory(historyObj) {
+            const list = document.getElementById('transList');
+            list.innerHTML = "";
+            if(!historyObj) return;
+            const cur = document.getElementById('currSel').value;
+            
+            Object.values(historyObj).reverse().forEach(t => {
+                const item = document.createElement('div');
+                item.className = 't-item';
+                item.innerHTML = `<div style="display:flex; gap:15px; align-items:center;"><div class="t-icon">${t.type==='income'?'💰':t.icon}</div><div><h4>${t.type==='income'?'Income':t.cat}</h4><small>${t.date}</small></div></div><div style="font-weight:800; color:${t.type==='income'?'var(--income)':'var(--expense)'}">${t.type==='income'?'+':'-'}${cur}${t.amt}</div>`;
+                list.appendChild(item);
+            });
+        }
+
+        function save() {
+            const amt = parseFloat(document.getElementById('amtInp').value);
+            if(!amt) return;
+            
+            const newBal = balance + (type === 'income' ? amt : -amt);
+            const entry = { amt, type, cat: catName, icon, date: new Date().toLocaleDateString() };
+
+            db.ref('aditya_data').update({
+                balance: newBal,
+                count: count + 1,
+                currency: document.getElementById('currSel').value
+            });
+            db.ref('aditya_data/history').push(entry);
+
+            document.getElementById('amtInp').value = '';
+            closeModal();
+        }
+
+        function updateCurrency() {
+            db.ref('aditya_data').update({ currency: document.getElementById('currSel').value });
+        }
+
+        function wipe() { if(confirm("Clear Everything?")) db.ref('aditya_data').remove(); }
+
+        // UI Handlers
+        function showPage(id, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            btn.classList.add('active');
+            if(id === 'reports') initChart();
+        }
+        function openModal() { document.getElementById('addModal').classList.add('open'); }
+        function closeModal() { document.getElementById('addModal').classList.remove('open'); }
+        function setType(t) { 
+            type = t; 
+            document.getElementById('inBtn').classList.toggle('active-in', t === 'income');
+            document.getElementById('exBtn').classList.toggle('active-ex', t === 'expense');
+            document.getElementById('catGrid').style.opacity = (t === 'income' ? '0.2' : '1');
+            document.getElementById('catGrid').style.pointerEvents = (t === 'income' ? 'none' : 'auto');
+        }
+        function selCat(el, i, n) { 
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected'); icon = i; catName = n;
+        }
+        function initChart() {
+            const ctx = document.getElementById('reportChart').getContext('2d');
+            if(chart) chart.destroy();
+            chart = new Chart(ctx, { type: 'doughnut', data: { labels: ['Spent', 'Balance'], datasets: [{ data: [count * 100, Math.abs(balance)], backgroundColor: ['#ef4444', '#22c55e'], borderWidth: 0 }] }, options: { cutout: '80%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } } } });
+        }
+
+        // Time Greet
+        const h = new Date().getHours();
+        document.getElementById('greet').innerText = (h < 12 ? "Good Morning" : h < 17 ? "Good Afternoon" : "Good Evening") + ",";
+
+        initApp();
+    </script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExpensePro | Premium Auth</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+
+    <style>
+        /* --- Tera Saara Purana CSS Same Rhega (Isliye Space Bachane ke liye nhi likh rha) --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@700;800&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        body { height: 100vh; display: flex; justify-content: center; align-items: center; background: #040714; overflow: hidden; color: #f0f0f0; }
+        .mesh-bg { position: absolute; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at 15% 15%, rgba(66, 135, 245, 0.2) 0%, transparent 35%), radial-gradient(circle at 85% 85%, rgba(147, 51, 234, 0.2) 0%, transparent 35%), radial-gradient(circle at 50% 50%, rgba(20, 20, 20, 0.8) 0%, #040714 100%); }
+        .auth-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 36px; padding: 56px; width: 440px; box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.6); position: relative; transform: translateY(20px); opacity: 0; animation: cardLoad 0.8s ease-out forwards; }
+        @keyframes cardLoad { to { transform: translateY(0); opacity: 1; } }
+        .brand-logo { text-align: center; margin-bottom: 48px; }
+        .brand-logo h1 { font-family: 'Montserrat', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -1.5px; background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .brand-logo p { color: #94a3b8; font-size: 14px; margin-top: 6px; font-weight: 400; }
+        .input-group { position: relative; margin-bottom: 28px; }
+        .input-group input { width: 100%; padding: 18px 20px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px; outline: none; color: white; font-size: 16px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .input-group label { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #64748b; font-size: 16px; font-weight: 400; pointer-events: none; transition: all 0.3s ease; }
+        .input-group input:focus ~ label, .input-group input:not(:placeholder-shown) ~ label { top: 0; left: 15px; font-size: 12px; font-weight: 600; color: #60a5fa; padding: 0 8px; background: #080b1a; border-radius: 4px; }
+        .btn-premium { width: 100%; padding: 18px; background: linear-gradient(135deg, #2563eb 0%, #9333ea 100%); border: none; border-radius: 18px; color: white; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden; box-shadow: 0 12px 24px -6px rgba(147, 51, 234, 0.5); }
+        .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 18px 30px -6px rgba(147, 51, 234, 0.6); }
+        .auth-footer { text-align: center; margin-top: 30px; font-size: 14px; color: #94a3b8; }
+        .auth-footer a { color: #60a5fa; text-decoration: none; font-weight: 600; transition: 0.2s; }
+        .hidden { display: none; }
+        .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: rippleEffect 0.6s linear; background: rgba(255, 255, 255, 0.3); pointer-events: none; }
+        @keyframes rippleEffect { to { transform: scale(4); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div class="mesh-bg"></div>
+
+    <div class="auth-card">
+        <div class="brand-logo">
+            <h1>ExpensePro</h1>
+            <p>Smart Money Management</p>
+        </div>
+
+        <div id="loginBlock">
+            <div class="input-group">
+                <input type="email" id="loginEmail" placeholder=" " required>
+                <label>Email Address</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="loginPass" placeholder=" " required>
+                <label>Password</label>
+            </div>
+            <button class="btn-premium" onclick="handleLogin(event)">Secure Login</button>
+            <div class="auth-footer">Don't have an account? <a href="#" id="toSignup">Sign Up Free</a></div>
+        </div>
+
+        <div id="signupBlock" class="hidden">
+            <div class="input-group">
+                <input type="text" id="userName" placeholder=" " required>
+                <label>Full Name</label>
+            </div>
+            <div class="input-group">
+                <input type="email" id="signupEmail" placeholder=" " required>
+                <label>Email Address</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="signupPass" placeholder=" " required>
+                <label>Create Password</label>
+            </div>
+            <button class="btn-premium" onclick="handleSignup(event)">Get Started</button>
+            <div class="auth-footer">Already member? <a href="#" id="toLogin">Log In</a></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Firebase Configuration (Wahi wali jo tune di thi) ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAuAk4SC_u75__SMqKu50r5bVdga8xcSZY",
+            authDomain: "expensespro.firebaseapp.com",
+            projectId: "expensespro",
+            storageBucket: "expensespro.firebasestorage.app",
+            messagingSenderId: "117225436411",
+            appId: "1:117225436411:web:db2359d4c642ceec46ac5e"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // --- 2. Navigation Logic ---
+        const toSignup = document.getElementById('toSignup');
+        const toLogin = document.getElementById('toLogin');
+        const loginBlock = document.getElementById('loginBlock');
+        const signupBlock = document.getElementById('signupBlock');
+
+        toSignup.addEventListener('click', (e) => { e.preventDefault(); loginBlock.classList.add('hidden'); signupBlock.classList.remove('hidden'); });
+        toLogin.addEventListener('click', (e) => { e.preventDefault(); signupBlock.classList.add('hidden'); loginBlock.classList.remove('hidden'); });
+
+        // --- 3. Login Logic ---
+        function handleLogin(event) {
+            createRipple(event);
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => { window.location.href = "dashboard.html"; })
+                .catch((err) => { alert("Login Fail: " + err.message); });
+        }
+
+        // --- 4. Signup Logic ---
+        function handleSignup(event) {
+            createRipple(event);
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('signupEmail').value;
+            const pass = document.getElementById('signupPass').value;
+
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    // Name save karne ke liye profile update
+                    userCredential.user.updateProfile({ displayName: name });
+                    window.location.href = "dashboard.html";
+                })
+                .catch((err) => { alert("Signup Fail: " + err.message); });
+        }
+
+        // --- Ripple Effect ---
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const circle = document.createElement("span");
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+            circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+            circle.classList.add("ripple");
+            const ripple = button.getElementsByClassName("ripple")[0];
+            if (ripple) { ripple.remove(); }
+            button.appendChild(circle);
+        }
+    </script>
+</body>
+</html>

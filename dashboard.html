@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExpensePro | Ultimate Cloud</title>
+    <title>ExpensePro | Premium v6.0</title>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
@@ -61,6 +62,15 @@
         <div id="transList" style="margin-top: 15px;"></div>
     </div>
 
+    <div id="reports" class="page">
+        <header class="header"><h1>Reports</h1></header>
+        <div class="balance-card" style="padding: 20px;">
+            <canvas id="statChart"></canvas>
+        </div>
+        <div class="setting-card"><span>Total Income</span><h4 id="totIn" style="color:var(--income)">₹0</h4></div>
+        <div class="setting-card"><span>Total Expense</span><h4 id="totEx" style="color:var(--expense)">₹0</h4></div>
+    </div>
+
     <div id="settings" class="page">
         <header class="header"><h1>Settings</h1></header>
         <div class="setting-card"><span>Currency</span><select id="currSel" onchange="updateCurrency()"><option value="₹">INR (₹)</option><option value="$">USD ($)</option></select></div>
@@ -95,6 +105,7 @@
 
     <nav class="bottom-nav">
         <button class="nav-item active" onclick="showPage('home', this)">🏠<small>Home</small></button>
+        <button class="nav-item" onclick="showPage('reports', this)">📈<small>Stats</small></button>
         <button class="add-btn" onclick="openModal()">+</button>
         <button class="nav-item" onclick="showPage('settings', this)">⚙️<small>Set</small></button>
         <button class="nav-item" onclick="showPage('profile', this)">👤<small>Me</small></button>
@@ -112,7 +123,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database(), auth = firebase.auth();
 
-        let balance = 0, count = 0, userPath = "", type = 'expense', icon = '🍕', catName = 'Food', editKey = null, currency = '₹';
+        let balance = 0, count = 0, userPath = "", type = 'expense', icon = '🍕', catName = 'Food', editKey = null, currency = '₹', myChart = null;
 
         auth.onAuthStateChanged((user) => {
             if (user) {
@@ -135,7 +146,34 @@
                 document.getElementById('mainBal').innerText = currency + balance.toLocaleString();
                 document.getElementById('statCount').innerText = count;
                 document.getElementById('rankLabel').innerText = count > 20 ? "GOLD RANK" : count > 10 ? "SILVER RANK" : "BRONZE RANK";
+                
+                processReports(data.history);
                 renderHistory(data.history);
+            });
+        }
+
+        function processReports(history) {
+            let tin = 0, tex = 0;
+            if(history) {
+                Object.values(history).forEach(t => {
+                    if(t.type === 'income') tin += t.amt; else tex += t.amt;
+                });
+            }
+            document.getElementById('totIn').innerText = currency + tin.toLocaleString();
+            document.getElementById('totEx').innerText = currency + tex.toLocaleString();
+            updateChart(tin, tex);
+        }
+
+        function updateChart(tin, tex) {
+            const ctx = document.getElementById('statChart').getContext('2d');
+            if(myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Income', 'Expense'],
+                    datasets: [{ data: [tin, tex], backgroundColor: ['#22c55e', '#ef4444'], borderWidth: 0 }]
+                },
+                options: { cutout: '80%', plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } } }
             });
         }
 
@@ -191,12 +229,14 @@
         }
 
         function updateCurrency() { db.ref(userPath).update({ currency: document.getElementById('currSel').value }); }
+        
         function showPage(id, btn) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             btn.classList.add('active');
         }
+
         function setType(t) {
             type = t;
             document.getElementById('inBtn').classList.toggle('active-in', t === 'income');
@@ -204,6 +244,7 @@
             document.getElementById('catBox').style.display = (t === 'income' ? 'none' : 'grid');
             if(t === 'income') { catName = "Income"; icon = "💰"; }
         }
+
         function openModal() { document.getElementById('addModal').classList.add('open'); }
         function closeModal() { document.getElementById('addModal').classList.remove('open'); editKey = null; document.getElementById('amtInp').value = ""; }
         function selCat(el, i, n) { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected')); el.classList.add('selected'); icon = i; catName = n; }

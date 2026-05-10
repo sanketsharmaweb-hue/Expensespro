@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ExpensePro | Premium v6.0</title>
+    <title>ExpensePro | Premium v6.0 PWA</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
@@ -74,6 +80,7 @@
     <div id="settings" class="page">
         <header class="header"><h1>Settings</h1></header>
         <div class="setting-card"><span>Currency</span><select id="currSel" onchange="updateCurrency()"><option value="₹">INR (₹)</option><option value="$">USD ($)</option></select></div>
+        <button id="installApp" style="display:none; width:100%; padding:18px; border-radius:18px; border:none; background:var(--primary); color:#fff; font-weight:800; margin-top:10px;">Install App Icon</button>
         <button onclick="logout()" style="width:100%; padding:18px; border-radius:18px; border:none; background:rgba(255,255,255,0.05); color:var(--expense); font-weight:800; margin-top:20px;">Logout Account</button>
     </div>
 
@@ -112,6 +119,25 @@
     </nav>
 
     <script>
+        // PWA Install Logic
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installApp').style.display = 'block';
+        });
+
+        document.getElementById('installApp').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    document.getElementById('installApp').style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        });
+
         const firebaseConfig = {
             apiKey: "AIzaSyAuAk4SC_u75__SMqKu50r5bVdga8xcSZY",
             authDomain: "expensespro.firebaseapp.com",
@@ -146,7 +172,6 @@
                 document.getElementById('mainBal').innerText = currency + balance.toLocaleString();
                 document.getElementById('statCount').innerText = count;
                 document.getElementById('rankLabel').innerText = count > 20 ? "GOLD RANK" : count > 10 ? "SILVER RANK" : "BRONZE RANK";
-                
                 processReports(data.history);
                 renderHistory(data.history);
             });
@@ -251,6 +276,11 @@
         function logout() { auth.signOut(); }
         const h = new Date().getHours();
         document.getElementById('greet').innerText = h < 12 ? "Good Morning," : h < 17 ? "Good Afternoon," : "Good Evening,";
+
+        // Service Worker Register
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
     </script>
 </body>
 </html>

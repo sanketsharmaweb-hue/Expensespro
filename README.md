@@ -1,22 +1,25 @@
 <div align="center">
 
+<img src="https://i.ibb.co/bgtCcPLN/Screenshot-20260511-110724-Files-by-Google.png" width="140">
+
 # 💸 ExpensePro
 
-### Smart Expense Tracker Web App
+### Modern Expense Tracker Web Application
 
-Track your daily expenses with a clean UI, secure authentication, and real-time Firebase database integration.
+Track expenses, manage your money smarter, and store everything securely with Firebase.
 
 <br>
-
-<img src="https://i.ibb.co/gF7wFVfc/file-000000000cc871faa6a7260c81b1234e.png" width="120">
-
-<br><br>
 
 ![HTML](https://img.shields.io/badge/HTML5-Frontend-orange?style=for-the-badge&logo=html5)
 ![CSS](https://img.shields.io/badge/CSS3-Styling-blue?style=for-the-badge&logo=css3)
 ![JavaScript](https://img.shields.io/badge/JavaScript-Logic-yellow?style=for-the-badge&logo=javascript)
 ![Firebase](https://img.shields.io/badge/Firebase-Backend-orange?style=for-the-badge&logo=firebase)
-![Responsive](https://img.shields.io/badge/Responsive-Design-green?style=for-the-badge)
+![Responsive](https://img.shields.io/badge/Responsive-Mobile%20Friendly-green?style=for-the-badge)
+
+<br><br>
+
+<img src="https://img.shields.io/github/stars/sanketbuildss/ExpensePro?style=social">
+<img src="https://img.shields.io/github/forks/sanketbuildss/ExpensePro?style=social">
 
 </div>
 
@@ -24,65 +27,71 @@ Track your daily expenses with a clean UI, secure authentication, and real-time 
 
 # 🚀 About ExpensePro
 
-ExpensePro is a modern expense tracking web application built using HTML, CSS, JavaScript, and Firebase.
+ExpensePro is a clean and modern expense tracker web application built using HTML, CSS, JavaScript, and Firebase.
 
-It helps users manage their daily expenses with secure authentication and real-time cloud storage.
+The goal of this project is to help users track daily expenses with a secure and responsive dashboard experience.
 
-The project focuses on:
+It provides:
 
-- Clean UI/UX
-- Fast performance
-- Secure authentication
-- Separate user data management
-- Responsive design
+- 🔐 Secure Authentication
+- ☁️ Firebase Cloud Database
+- 📊 Expense Tracking
+- ⚡ Real-Time Updates
+- 📱 Responsive UI
+- 💡 Clean User Experience
 
 ---
 
 # ✨ Features
 
-## 🔐 Authentication
+## 🔐 Authentication System
+
 - User Signup & Login
 - Firebase Authentication
-- Secure User Sessions
+- Secure Sessions
+
+---
 
 ## 💰 Expense Management
+
 - Add Expenses
 - Delete Expenses
-- Real-Time Updates
-- Expense History
+- Real-Time Expense Updates
+- Expense History Tracking
+
+---
 
 ## ☁️ Firebase Integration
+
 - Firestore Database
-- Cloud Data Storage
+- Cloud Storage
 - Separate User Expense Data
-
-## 📱 Responsive UI
-- Mobile Friendly
-- Modern Dashboard
-- Clean Design
-
----
-
-# 🛠️ Tech Stack
-
-| Technology | Purpose |
-|------------|----------|
-| HTML5 | Structure |
-| CSS3 | Styling |
-| JavaScript | Functionality |
-| Firebase Auth | Authentication |
-| Firestore | Database |
-| Firebase Hosting | Deployment |
-
----
-
-# 🔥 Firebase Database Structure
 
 ```bash
 users/{uid}/expenses
 ```
 
-Each user gets their own secure expense collection.
+---
+
+## 📱 Responsive Design
+
+- Mobile Friendly
+- Modern Dashboard
+- Clean UI Layout
+- Fast Performance
+
+---
+
+# 🛠️ Tech Stack
+
+| Technology | Usage |
+|------------|-------|
+| HTML5 | Structure |
+| CSS3 | Styling |
+| JavaScript | Frontend Logic |
+| Firebase Auth | Authentication |
+| Firestore | Database |
+| Firebase Hosting | Deployment |
 
 ---
 
@@ -103,7 +112,7 @@ ExpensePro/
 
 # ⚡ Getting Started
 
-## 1️⃣ Clone Repository
+## Clone Repository
 
 ```bash
 git clone https://github.com/sanketbuildss/ExpensePro.git
@@ -111,7 +120,7 @@ git clone https://github.com/sanketbuildss/ExpensePro.git
 
 ---
 
-## 2️⃣ Open Project Folder
+## Open Folder
 
 ```bash
 cd ExpensePro
@@ -119,7 +128,7 @@ cd ExpensePro
 
 ---
 
-## 3️⃣ Run Project
+## Run Project
 
 Open:
 
@@ -133,29 +142,29 @@ in your browser.
 
 # 🔥 Firebase Setup
 
-## Step 1
-Create a Firebase project
+### Step 1
+Create Firebase Project
 
-## Step 2
+### Step 2
 Enable Authentication
 
-## Step 3
+### Step 3
 Enable Firestore Database
 
-## Step 4
-Add Firebase configuration
+### Step 4
+Add Firebase Config
 
-## Step 5
-Run the project
+### Step 5
+Run Project
 
 ---
 
-# 🎯 Future Improvements
+# 🎯 Upcoming Features
 
-- 📊 Expense Analytics
+- 📈 Expense Analytics
 - 🌙 Dark Mode
 - 📅 Monthly Reports
-- 📈 Charts & Graphs
+- 📊 Charts & Graphs
 - 💳 Budget Planning
 - 📱 PWA Support
 
@@ -163,30 +172,37 @@ Run the project
 
 # 👨‍💻 Developer
 
+<div align="center">
+
 ## Sanket Sharma
 
 📍 Rajasthan, India
 
 ### 📬 Contact
 
-- 📧 sanketsharma.web@gmail.com
-- 📱 +91 63673 17712
+📧 sanketsharma.web@gmail.com
 
----
+📱 +91 63673 17712
 
-# 🌐 Connect With Me
+<br>
 
-### GitHub
-https://github.com/sanketbuildss
+<a href="https://github.com/sanketbuildss">
+  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github">
+</a>
 
-### Instagram
-https://www.instagram.com/sanket.web
+<a href="https://www.instagram.com/sanket.web">
+  <img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white">
+</a>
+
+</div>
 
 ---
 
 <div align="center">
 
-## ⭐ Star This Repository If You Like It
+# ⭐ Star This Repository
+
+If you like this project, give it a star on GitHub.
 
 Made with ❤️ by Sanket Sharma
 

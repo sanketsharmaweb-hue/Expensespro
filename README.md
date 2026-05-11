@@ -1,71 +1,69 @@
 <div align="center">
 
-<img src="https://i.ibb.co/bgtCcPLN/Screenshot-20260511-110724-Files-by-Google.png" width="140">
+# ✨ ExpensePro
 
-# 💸 ExpensePro
+### 💸 Smart Expense Tracker Web App
 
-### Modern Expense Tracker Web Application
-
-Track expenses, manage your money smarter, and store everything securely with Firebase.
+<p align="center">
+  Manage your daily expenses with a modern UI, secure Firebase authentication,  
+  and real-time cloud database integration.
+</p>
 
 <br>
 
-![HTML](https://img.shields.io/badge/HTML5-Frontend-orange?style=for-the-badge&logo=html5)
-![CSS](https://img.shields.io/badge/CSS3-Styling-blue?style=for-the-badge&logo=css3)
-![JavaScript](https://img.shields.io/badge/JavaScript-Logic-yellow?style=for-the-badge&logo=javascript)
-![Firebase](https://img.shields.io/badge/Firebase-Backend-orange?style=for-the-badge&logo=firebase)
-![Responsive](https://img.shields.io/badge/Responsive-Mobile%20Friendly-green?style=for-the-badge)
+<p align="center">
+  <img src="https://skillicons.dev/icons?i=html,css,js,firebase,vscode,github" />
+</p>
 
-<br><br>
+<br>
 
-<img src="https://img.shields.io/github/stars/sanketbuildss/ExpensePro?style=social">
-<img src="https://img.shields.io/github/forks/sanketbuildss/ExpensePro?style=social">
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Responsive-Yes-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/Open%20Source-Love-red?style=for-the-badge">
+</p>
 
 </div>
 
 ---
 
-# 🚀 About ExpensePro
+# 🚀 About The Project
 
-ExpensePro is a clean and modern expense tracker web application built using HTML, CSS, JavaScript, and Firebase.
+ExpensePro is a modern and responsive expense tracker web application built using:
 
-The goal of this project is to help users track daily expenses with a secure and responsive dashboard experience.
+- 🌐 HTML5
+- 🎨 CSS3
+- ⚡ JavaScript
+- 🔥 Firebase
 
-It provides:
-
-- 🔐 Secure Authentication
-- ☁️ Firebase Cloud Database
-- 📊 Expense Tracking
-- ⚡ Real-Time Updates
-- 📱 Responsive UI
-- 💡 Clean User Experience
+The project helps users securely manage their expenses with a clean dashboard experience and cloud database storage.
 
 ---
 
 # ✨ Features
 
-## 🔐 Authentication System
+## 🔐 Authentication
 
-- User Signup & Login
-- Firebase Authentication
-- Secure Sessions
+- ✅ User Signup & Login
+- 🔥 Firebase Authentication
+- 🛡️ Secure User Sessions
 
 ---
 
 ## 💰 Expense Management
 
-- Add Expenses
-- Delete Expenses
-- Real-Time Expense Updates
-- Expense History Tracking
+- ➕ Add Expenses
+- ❌ Delete Expenses
+- ⚡ Real-Time Updates
+- 📋 Expense History
 
 ---
 
 ## ☁️ Firebase Integration
 
-- Firestore Database
-- Cloud Storage
-- Separate User Expense Data
+- 🔥 Firestore Database
+- ☁️ Cloud Storage
+- 👤 Separate User Expense Data
 
 ```bash
 users/{uid}/expenses
@@ -75,23 +73,27 @@ users/{uid}/expenses
 
 ## 📱 Responsive Design
 
-- Mobile Friendly
-- Modern Dashboard
-- Clean UI Layout
-- Fast Performance
+- 📲 Mobile Friendly
+- 💻 Desktop Optimized
+- ✨ Clean Modern UI
+- ⚡ Fast Performance
 
 ---
 
 # 🛠️ Tech Stack
 
-| Technology | Usage |
-|------------|-------|
+<div align="center">
+
+| 💻 Technology | 🚀 Purpose |
+|---|---|
 | HTML5 | Structure |
 | CSS3 | Styling |
 | JavaScript | Frontend Logic |
 | Firebase Auth | Authentication |
 | Firestore | Database |
 | Firebase Hosting | Deployment |
+
+</div>
 
 ---
 
@@ -100,19 +102,19 @@ users/{uid}/expenses
 ```bash
 ExpensePro/
 │
-├── index.html
-├── login.html
-├── dashboard.html
-├── style.css
-├── script.js
-└── firebase-config.js
+├── 📄 index.html
+├── 🔐 login.html
+├── 📊 dashboard.html
+├── 🎨 style.css
+├── ⚡ script.js
+└── 🔥 firebase-config.js
 ```
 
 ---
 
 # ⚡ Getting Started
 
-## Clone Repository
+## 📥 Clone Repository
 
 ```bash
 git clone https://github.com/sanketbuildss/ExpensePro.git
@@ -120,7 +122,7 @@ git clone https://github.com/sanketbuildss/ExpensePro.git
 
 ---
 
-## Open Folder
+## 📂 Open Project Folder
 
 ```bash
 cd ExpensePro
@@ -128,7 +130,7 @@ cd ExpensePro
 
 ---
 
-## Run Project
+## ▶️ Run Project
 
 Open:
 
@@ -142,24 +144,19 @@ in your browser.
 
 # 🔥 Firebase Setup
 
-### Step 1
-Create Firebase Project
+### 1️⃣ Create Firebase Project
 
-### Step 2
-Enable Authentication
+### 2️⃣ Enable Authentication
 
-### Step 3
-Enable Firestore Database
+### 3️⃣ Enable Firestore Database
 
-### Step 4
-Add Firebase Config
+### 4️⃣ Add Firebase Config
 
-### Step 5
-Run Project
+### 5️⃣ Run The Project
 
 ---
 
-# 🎯 Upcoming Features
+# 🎯 Future Improvements
 
 - 📈 Expense Analytics
 - 🌙 Dark Mode
@@ -178,20 +175,22 @@ Run Project
 
 📍 Rajasthan, India
 
-### 📬 Contact
+<br>
+
+### 📬 Contact Me
 
 📧 sanketsharma.web@gmail.com
 
 📱 +91 63673 17712
 
-<br>
+<br><br>
 
 <a href="https://github.com/sanketbuildss">
-  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github">
+  <img src="https://skillicons.dev/icons?i=github" width="55" />
 </a>
 
 <a href="https://www.instagram.com/sanket.web">
-  <img src="https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white">
+  <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" width="50" />
 </a>
 
 </div>
@@ -202,7 +201,9 @@ Run Project
 
 # ⭐ Star This Repository
 
-If you like this project, give it a star on GitHub.
+### If you like this project, support it by giving a star ⭐
+
+<br>
 
 Made with ❤️ by Sanket Sharma
 
